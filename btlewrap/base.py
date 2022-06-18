@@ -24,9 +24,9 @@ class BluetoothInterface:
         if self.is_connected():
             self._backend.disconnect()
 
-    def connect(self, mac) -> "_BackendConnection":
+    def connect(self, mac, timeout=None) -> "_BackendConnection":
         """Connect to the sensor."""
-        return _BackendConnection(self._backend, mac)
+        return _BackendConnection(self._backend, mac, timeout)
 
     @staticmethod
     def is_connected() -> bool:
@@ -42,16 +42,17 @@ class _BackendConnection:  # pylint: disable=too-few-public-methods
 
     _lock = Lock()
 
-    def __init__(self, backend: "AbstractBackend", mac: str):
+    def __init__(self, backend: "AbstractBackend", mac: str, timeout=None):
         self._backend = backend  # type: AbstractBackend
         self._mac = mac  # type: str
+        self._timeout = timeout
         self._has_lock = False
 
     def __enter__(self) -> "AbstractBackend":
         self._lock.acquire()
         self._has_lock = True
         try:
-            self._backend.connect(self._mac)
+            self._backend.connect(self._mac, timeout=self._timeout)
         # release lock on any exceptions otherwise it will never be unlocked
         except:  # noqa: E722
             self._cleanup()
@@ -95,7 +96,7 @@ class AbstractBackend:
         self.address_type = address_type
         self.kwargs = kwargs
 
-    def connect(self, mac: str):
+    def connect(self, mac: str, timeout=None):
         """connect to a device with the given @mac.
 
         only required by some backends"""

@@ -46,7 +46,7 @@ class BluepyBackend(AbstractBackend):
         self._peripheral = None
 
     @wrap_exception
-    def connect(self, mac: str):
+    def connect(self, mac: str, timeout=None):
         """Connect to a device."""
         from bluepy.btle import Peripheral
 
@@ -57,7 +57,7 @@ class BluepyBackend(AbstractBackend):
                 'Expetected something like "hci0".'.format(self.adapter)
             )
         iface = int(match_result.group(1))
-        self._peripheral = Peripheral(mac, iface=iface, addrType=self.address_type)
+        self._peripheral = Peripheral(mac, iface=iface, addrType=self.address_type, timeout=timeout)
 
     @wrap_exception
     def disconnect(self):
