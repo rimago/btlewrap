@@ -69,14 +69,14 @@ class BluepyBackend(AbstractBackend):
         self._peripheral = None
 
     @wrap_exception
-    def read_handle(self, handle: int) -> bytes:
+    def read_handle(self, handle: int, timeout=None) -> bytes:
         """Read a handle from the device.
 
         You must be connected to do this.
         """
         if self._peripheral is None:
             raise BluetoothBackendException("not connected to backend")
-        return self._peripheral.readCharacteristic(handle)
+        return self._peripheral.readCharacteristic(handle, timeout=timeout)
 
     @wrap_exception
     def write_handle(self, handle: int, value: bytes):

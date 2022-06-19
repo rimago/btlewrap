@@ -122,7 +122,7 @@ class AbstractBackend:
         """
         raise NotImplementedError
 
-    def read_handle(self, handle: int) -> bytes:
+    def read_handle(self, handle: int, timeout=None) -> bytes:
         """Read a handle from the sensor.
 
         You must be connected to a device first."""
