@@ -67,9 +67,11 @@ class _BackendConnection:  # pylint: disable=too-few-public-methods
 
     def _cleanup(self):
         if self._has_lock:
-            self._backend.disconnect()
-            self._lock.release()
-            self._has_lock = False
+            try:
+                self._backend.disconnect()
+            finally:
+                self._lock.release()
+                self._has_lock = False
 
     @staticmethod
     def is_connected() -> bool:
